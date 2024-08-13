@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en" xmlns="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8" />
+	<title>과일 목록</title>
+</head>
+<body>
+	
+	<div th:each="fruit : ${fruitsList}" 
+	th:text="${fruit}"
+	th:attr="data-id=${fruit.fid}"
+	onclick="location.href='/fruit/update/2';"></div>
+	
+	
+	
+</body>
+</html>

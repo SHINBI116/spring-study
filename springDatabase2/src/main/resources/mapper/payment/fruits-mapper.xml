@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Fruits">
+	<select id="getAll" resultType="fruit">
+		SELECT
+		fid, fname, price, qty, exp_date, location_id
+		FROM
+		fruits
+		ORDER BY
+		fid DESC
+	</select>
+
+	<update id="reduceFruit" parameterType="java.util.HashMap">
+		UPDATE fruits
+		SET qty = qty - #{qty}
+		WHERE fid = #{fid}
+	</update>
+
+	<insert id="addHistory" parameterType="java.util.HashMap">
+		INSERT INTO
+		fruitSalesHistory(fhid, fid, qty)
+		VALUES(fhistory_fhid_seq.nextval, #{fid}, #{qty})
+	</insert>
+
+	<select id="getPurchaseList"
+		resultType="com.ezen.springdata.fruit.dto.FruitsSalesHistoryInfoDTO">
+		SELECT
+			fid, fhid, fh.qty AS purchase_qty, purchase_time,
+			fname, price, f.qty AS remain_qty, exp_date, location_id
+		FROM
+			fruitsaleshistory fh
+		INNER JOIN
+			fruits f USING(fid)
+	</select>
+
+
+	<insert id="add" parameterType="fruit">
+		INSERT INTO fruits
+		(fid, fname, price, qty, exp_date)
+		VALUES
+		<if test="exp_date != null">
+			(fruit_fid_seq.nextval, #{fname}, #{price}, #{qty},
+			#{exp_date})
+		</if>
+		<if test="exp_date == null">
+			(fruit_fid_seq.nextval, #{fname}, #{price}, #{qty},
+			sysdate + 7)
+		</if>
+	</insert>
+	<!-- insert 후 숫자 대신 키값을 알아내는 방식 -->
+	<insert id="add2" parameterType="fruit">
+		<!-- insert문에 selectKey를 사용하면 insert 성공 여부 대신 키값이 추가된 dto를 반환한다 -->
+		<selectKey keyProperty="fid" resultType="Integer"
+			order="BEFORE">
+			SELECT fruit_fid_seq.nextval FROM dual
+		</selectKey>
+		INSERT INTO fruits
+		(fid, fname, price, qty, exp_date)
+		VALUES
+		<if test="exp_date != null">
+			(#{fid}, #{fname}, #{price}, #{qty}, #{exp_date})
+		</if>
+		<if test="exp_date == null">
+			(#{fid}, #{fname}, #{price}, #{qty}, sysdate + 7)
+		</if>
+	</insert>
+
+
+
+	<select id="get" resultType="fruit">
+		SELECT
+		fid, fname, price, qty, exp_date
+		FROM
+		fruits
+		WHERE
+		fid = #{fid}
+	</select>
+
+	<update id="fruit_update" parameterType="fruit">
+		UPDATE fruits SET
+		fname = #{fname}, price = #{price}, qty = #{qty}, exp_date = #{exp_date}
+		WHERE
+		fid = #{fid}
+	</update>
+
+	<delete id="fruit_delete" parameterType="fruit">
+		DELETE FROM fruits WHERE
+		fid = #{fid}
+	</delete>
+</mapper>

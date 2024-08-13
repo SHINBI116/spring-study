@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<title>수정폼</title>
+</head>
+<body>
+	<form th:action="|/fruit/modify/${fruit.fid}|" th:object="${fruit}" method="POST">
+		<input type="text" th:field="*{fname}"/> <br>
+		<input type="text" th:field="*{price}" /> <br>
+		<input type="text" th:field="*{qty}"/> <br>
+		<input type="datetime-local" th:field="*{exp_date}"/> <br>
+		<input type="submit" value="수정"/>
+	</form>
+</body>
+</html>
